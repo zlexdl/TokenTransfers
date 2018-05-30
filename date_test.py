@@ -1,5 +1,11 @@
 
 import datetime, time
+from pymongo import MongoClient
+
+conn = MongoClient('192.168.1.8', 27017)
+db = conn.token_address
+myset = db.btc
+myset.save({"address":"ssss", "name":"btc_001"})
 
 now = datetime.datetime.now()
 
