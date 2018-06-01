@@ -6,7 +6,7 @@ from scrapy.cmdline import execute
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# execute(["scrapy", "crawl", "tokens"])
+execute(["scrapy", "crawl", "tokens"])
 
 # execute(["scrapy", "crawl", "tokenholder"])
 
@@ -21,5 +21,5 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 # execute(["scrapy", "crawl", "EthTopHolder"])
 
 
-execute(["scrapy", "crawl", "CoinMarketCapHistory"])
+# execute(["scrapy", "crawl", "CoinMarketCapHistory"])
 
