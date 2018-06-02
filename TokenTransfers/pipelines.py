@@ -31,7 +31,9 @@ class ElasticsearchPipeline(object):
 
             token_transfer.save()
 
-        if spider.name == 'BTCtokenTopHolder':
+        spiders = ['BTCtokenTopHolder', 'BCHtokenTopHolder']
+
+        if spider.name in spiders:
             token_transfer = TokenTopHistoryType()
             token_transfer.symbol = item['symbol']
             token_transfer.name = item['name']
