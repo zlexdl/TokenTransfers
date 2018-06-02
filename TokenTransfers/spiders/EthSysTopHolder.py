@@ -3,37 +3,47 @@ from datetime import datetime
 import re
 from scrapy.http import Request
 import scrapy
-from redis import StrictRedis
+# from redis import StrictRedis
 
-from TokenTransfers.commons import get_holder_name
+from TokenTransfers.commons import get_holder_name_eth
 from TokenTransfers.items import TokenTopHistoryItem
+from pymongo import MongoClient
 
 
 class EthsystopholderSpider(scrapy.Spider):
     name = 'EthSysTopHolder'
     allowed_domains = ['etherscan.io']
     start_urls = []
-    redis = StrictRedis(host='192.168.1.8', port=6379, db=0)
+    # redis = StrictRedis(host='192.168.1.8', port=6379, db=0)
     tokens_names = {}
     tokens_address = {}
+    conn = MongoClient('192.168.1.8', 27017)
+    db = conn.contract_address
+    contract_address = db.eth
+    rich_count = 50
+    # symbol = 'eth'
 
     def __init__(self):
+        for i in self.contract_address.find():
+            # self.start_urls.append("http://etherscan.io/token/generic-tokenholders2?a=" + i["address"])
+            self.tokens_address[i["address"]] = i["symbol"]
+            self.tokens_names[i["symbol_name"]] = i["symbol"]
+            self.start_urls.append("https://etherscan.io/token/" + i["address"])
+        # tokens = self.redis.smembers("ETH_TOKENS")
+        # for token in tokens:
+        #     spilt = token.decode("utf-8").split("=")
+        #     symbol = spilt[0]
+        #     address = spilt[1]
+        #     self.tokens_address[address] = symbol
 
-        tokens = self.redis.smembers("ETH_TOKENS")
-        for token in tokens:
-            spilt = token.decode("utf-8").split("=")
-            symbol = spilt[0]
-            address = spilt[1]
-            self.tokens_address[address] = symbol
-            self.start_urls.append("https://etherscan.io/token/" + address)
-            # break #TODO
-
-        _tokens_names = self.redis.smembers("ETH_TOKENS_NAME")
-        for _tokens_name in _tokens_names:
-            spilt = str(_tokens_name.decode("utf-8")).split("=")
-            name = spilt[0]
-            token = str(spilt[1])
-            self.tokens_names[name] = token
+        #     # break #TODO
+        #
+        # _tokens_names = self.redis.smembers("ETH_TOKENS_NAME")
+        # for _tokens_name in _tokens_names:
+        #     spilt = str(_tokens_name.decode("utf-8")).split("=")
+        #     name = spilt[0]
+        #     token = str(spilt[1])
+        #     self.tokens_names[name] = token
 
     def parse(self, response):
         total_supply = response.css("table.table tr > td:nth-child(2)::text").extract()[0].strip().replace(',', '')
@@ -58,7 +68,7 @@ class EthsystopholderSpider(scrapy.Spider):
 
 
 
-        Decimals = response.css("table.table tr > td:nth-child(2)::text").extract()[10].strip()
+        Decimals = response.css("table.table tr > td:nth-child(2)::text").extract()[9].strip()
         contract_address = response.css("tr#ContentPlaceHolder1_trContract > td:nth-child(2) > a::text").extract()[0]
 
         yield Request(url="https://etherscan.io/token/generic-tokenholders2?a=" + contract_address,
@@ -90,6 +100,8 @@ class EthsystopholderSpider(scrapy.Spider):
             tokenTopHistoryItem['quantity'] = quantity
             tokenTopHistoryItem['percentage'] = percentage
             tokenTopHistoryItem['timestamp'] = datetime.now()
-            name = get_holder_name(self, address, symbol)
+            eth_db = self.conn.token_address
+            self.token_address = eth_db.ether
+            name = get_holder_name_eth(self, address, symbol, rank)
             tokenTopHistoryItem['name'] = name
             yield tokenTopHistoryItem

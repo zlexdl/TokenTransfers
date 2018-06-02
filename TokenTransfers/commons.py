@@ -27,6 +27,36 @@ def get_holder_name(self, address, symbol):
     return name
 
 
+def get_holder_name_mongodb(self, address, rank):
+    count = self.token_address.find().count()
+    if count < self.rich_count:
+        name = self.symbol + "_" + rank.zfill(3)
+        self.token_address.insert({"address": address, "name": name})
+
+    else:
+        exist_count = self.token_address.find({"address": address}).count()
+        if exist_count == 0:
+            name = self.symbol + "_" + str(count + 1).zfill(3)
+            self.token_address.insert({"address": address, "name": name})
+        else:
+            name = self.token_address.find_one({"address": address})['name']
+    return name
+
+def get_holder_name_eth(self, address, symbol, rank):
+    count = self.token_address.find({"symbol": symbol}).count()
+    if count < self.rich_count:
+        name = symbol + "_" + rank.zfill(3)
+        self.token_address.insert({"address": address, "name": name, "symbol": symbol})
+
+    else:
+        exist_count = self.token_address.find({"address": address}).count()
+        if exist_count == 0:
+            name = symbol + "_" + str(count + 1).zfill(3)
+            self.token_address.insert({"address": address, "name": name, "symbol": symbol})
+        else:
+            name = self.token_address.find_one({"address": address, "symbol": symbol})['name']
+    return name
+
 def add_addresses():
     eth_address = {
           '0x8d12a197cb00d4747a1fe03395095ce2a5cc6819': 'etherdelta_2'

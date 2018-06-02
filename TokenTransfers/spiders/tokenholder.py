@@ -6,13 +6,13 @@ import re
 from urllib import parse
 import datetime
 from TokenTransfers.items import TokentransfersItem
-
+from pymongo import MongoClient
 
 class TokenholderSpider(scrapy.Spider):
     name = 'tokenholder'
     allowed_domains = ['etherscan.io']
     start_urls = []
-    redis = StrictRedis(host='192.168.1.8', port=6379, db=0)
+    # redis = StrictRedis(host='192.168.1.8', port=6379, db=0)
     tokens_names = {}
     tokens_address = {}
     ex_address = {'0x8d12a197cb00d4747a1fe03395095ce2a5cc6819': 'etherdelta_2'
@@ -61,25 +61,31 @@ class TokenholderSpider(scrapy.Spider):
                     , '0x80a909968642f7f90686ff964e71154a00ce6e49': 'EX27'
                     , '0x7b74c19124a9ca92c6141a2ed5f92130fc2791f2': 'EX28'
                     , '0x5bd387c00ec5b4999800cf1223be1205aaa3a321': 'Hack'}
-
+    conn = MongoClient('192.168.1.8', 27017)
+    db = conn.contract_address
+    contract_address = db.eth
     done_address = []
 
     def __init__(self):
 
-        tokens = self.redis.smembers("ETH_TOKENS")
-        for token in tokens:
-            spilt = token.decode("utf-8").split("=")
-            symbol = spilt[0]
-            address = spilt[1]
-            self.tokens_address[address] = symbol
-            self.start_urls.append("http://etherscan.io/token/generic-tokenholders2?a=" + address)
+        for i in self.contract_address.find():
+            self.start_urls.append("http://etherscan.io/token/generic-tokenholders2?a=" + i["address"])
+            self.tokens_address[i["address"]] = i["symbol"]
+            self.tokens_names[i["symbol_name"]] = i["symbol"]
+        # tokens = self.redis.smembers("ETH_TOKENS")
+        # for token in tokens:
+        #     spilt = token.decode("utf-8").split("=")
+        #     symbol = spilt[0]
+        #     address = spilt[1]
+        #     self.tokens_address[address] = symbol
+        #     self.start_urls.append("http://etherscan.io/token/generic-tokenholders2?a=" + address)
 
-        _tokens_names = self.redis.smembers("ETH_TOKENS_NAME")
-        for _tokens_name in _tokens_names:
-            spilt = str(_tokens_name.decode("utf-8")).split("=")
-            name = spilt[0]
-            token = str(spilt[1])
-            self.tokens_names[name] = token
+        # _tokens_names = self.redis.smembers("ETH_TOKENS_NAME")
+        # for _tokens_name in _tokens_names:
+        #     spilt = str(_tokens_name.decode("utf-8")).split("=")
+        #     name = spilt[0]
+        #     token = str(spilt[1])
+        #     self.tokens_names[name] = token
 
     def parse(self, response):
         url = response.url
