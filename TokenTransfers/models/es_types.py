@@ -33,7 +33,7 @@ class TokenTopHistoryType(DocType):
     transaction = Date()
     last_transaction = Date()
     class Meta:
-        index = "token_top_history"
+        index = "token_top_history_2"
         doc_type = "token_top"
 
 class coinmarketcapType(DocType):
