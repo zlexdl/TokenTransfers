@@ -14,8 +14,8 @@ class BtctokentopholderSpider(scrapy.Spider):
     # redis = StrictRedis(host='192.168.1.8', port=6379, db=0)
     symbol = 'bch'
     conn = MongoClient('192.168.1.8', 27017)
-    db = conn.token_address
-    token_address = db.bch
+    db = conn.explorerdb_bch
+    token_address = db.holders
     rich_count = 100
 
     def parse(self, response):
