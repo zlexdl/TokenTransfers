@@ -4,7 +4,7 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-from TokenTransfers.models.es_types import TokenTransferType, TokenTopHistoryType, coinmarketcapType
+from TokenTransfers.models.es_types import TokenTransferType, TokenTopHistoryType, coinmarketcapType, EthsyswhaleholderType
 
 
 class TokentransfersPipeline(object):
@@ -78,6 +78,15 @@ class ElasticsearchPipeline(object):
             coinmarketcap.last_updated = item['last_updated']
             coinmarketcap.save()
 
+        if spider.name == 'Ethsyswhaleholder':
+            token_transfer = EthsyswhaleholderType()
+            token_transfer.symbol = item['symbol']
+            token_transfer.address = item['address']
+            token_transfer.name = item['name']
+            token_transfer.quantity = item['quantity']
+            token_transfer.timestamp = item['timestamp']
+
+            token_transfer.save()
         return item
 
 
