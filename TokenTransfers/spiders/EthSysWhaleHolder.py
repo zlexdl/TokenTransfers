@@ -41,7 +41,7 @@ class EthsyswhaleholderSpider(scrapy.Spider):
                 balance = data['balance']
                 item['name'] = name
                 item['symbol'] = tokeninfo['symbol']
-                item['address'] = tokeninfo['address']
+                item['address'] = address
                 item['quantity'] = balance / math.pow(10, float(decimals))
                 item['timestamp'] = datetime.now()
                 yield item
