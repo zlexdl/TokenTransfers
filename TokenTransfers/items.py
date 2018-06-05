@@ -54,3 +54,12 @@ class coinmarketcapItem(scrapy.Item):
     last_updated = scrapy.Field()
 
 
+class EthSysWhaleItem(scrapy.Item):
+    quantity = scrapy.Field()
+    address = scrapy.Field()
+    symbol = scrapy.Field()
+    timestamp = scrapy.Field()
+    name = scrapy.Field()
+
+
+

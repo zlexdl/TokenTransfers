@@ -57,6 +57,16 @@ class coinmarketcapType(DocType):
         index = "coin_market_cap_history"
         doc_type = "data"
 
+class EthsyswhaleholderType(DocType):
+    quantity = Float()
+    address = Keyword()
+    symbol = Keyword()
+    timestamp = Date()
+    name = Keyword()
+
+    class Meta:
+        index = "ethsys_whale_history"
+        doc_type = "data"
 
 if __name__ == "__main__":
     TokenTransferType.init()
