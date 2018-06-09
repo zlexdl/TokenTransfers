@@ -10,7 +10,13 @@ from TokenTransfers.items import coinmarketcapItem
 class CoinmarketcaphistorySpider(scrapy.Spider):
     name = 'CoinMarketCapHistory'
     allowed_domains = ['api.coinmarketcap.com/v1/ticker']
-    start_urls = ['https://api.coinmarketcap.com/v1/ticker/']
+    start_urls = []
+
+    def __init__(self):
+        self.start_urls.append('https://api.coinmarketcap.com/v1/ticker/')
+        for i in range(2, 16):
+            i100 = i * 100 + 1
+            self.start_urls.append("https://api.coinmarketcap.com/v1/ticker/?start=" + str(i100))
 
     def parse(self, response):
         main_data = json.loads(response.body.decode("utf-8"))
