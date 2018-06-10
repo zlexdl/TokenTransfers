@@ -3,6 +3,7 @@ from datetime import datetime
 
 from redis import StrictRedis
 
+
 def get_holder_name(self, address, symbol):
     if self.redis.exists(symbol + ':' + address):
         name = self.redis.get(symbol + ':' + address).decode("utf-8")

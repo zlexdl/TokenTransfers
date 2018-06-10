@@ -3,6 +3,7 @@ from datetime import datetime
 import re
 from scrapy.http import Request
 import scrapy
+from scrapy import log
 # from redis import StrictRedis
 
 from TokenTransfers.commons import get_holder_name_eth
@@ -11,6 +12,7 @@ from pymongo import MongoClient
 
 
 class EthsystopholderSpider(scrapy.Spider):
+    scrapy.log.start()
     name = 'EthSysTopHolder'
     allowed_domains = ['etherscan.io']
     start_urls = []
@@ -102,6 +104,7 @@ class EthsystopholderSpider(scrapy.Spider):
             tokenTopHistoryItem['timestamp'] = datetime.now()
             eth_db = self.conn.token_address
             self.token_address = eth_db.ether
+            log.msg("address=" + address, level=log.WARNING)
             name = get_holder_name_eth(self, address, symbol, rank)
             tokenTopHistoryItem['name'] = name
             yield tokenTopHistoryItem
